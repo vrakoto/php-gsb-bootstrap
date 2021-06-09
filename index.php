@@ -30,6 +30,9 @@ $statement = $pdo->prepare($query);
 $statement->execute($params);
 $visiteurs = $statement->fetchAll();
 
+if (count($visiteurs) <= 0) {
+    $error = "Aucun résultat trouvé";
+}
 
 ?>
 
@@ -70,13 +73,12 @@ $visiteurs = $statement->fetchAll();
         <div class="form-group">
             <input type="text" name="ville" class="form-control mb-2" placeholder="Insérer une ville">
         </div>
-        <button class="btn btn-primary mb-2">Rechercher la ville</button>
+        <button class="btn btn-primary mb-4">Rechercher la ville</button>
     </form>
-    <button class="btn btn-primary mb-4" onclick="showSelection();">Rechercher par un autre critère</button>
 
-    <form action="" method="get" class="hidden" id="formSelect">
-        <select onchange="yesnoCheck(this);" id="selectFilter" style="display: block;" class="mb-4" name="selectFilter">
-            <option value="none" disabled selected>Rechercher les critères</option>
+    <form action="" method="get" id="formSelect" style="display: block;">
+        <select onchange="yesnoCheck(this);" id="selectFilter"  name="selectFilter"  class="mb-2">
+            <option libelle="Aucun critère sélectionné" value="none" disabled selected>Rechercher les critères</option>
             <option libelle="un id" value="id">ID</option>
             <option libelle="un nom" value="nom">Nom</option>
             <option libelle="un prenom" value="prenom">Prenom</option>
@@ -86,11 +88,11 @@ $visiteurs = $statement->fetchAll();
             <option libelle="un rôle" value="role">Rôle</option>
         </select>
 
-        <div class="form-group hidden" id="filterItem">
-            <input type="text" id="selectedFilter" class="form-control mb-2" name="inputFilter">
+        <div class="form-group" id="filterItem">
+            <input type="text" id="selectedFilter" class="form-control mb-2" name="inputFilter" placeholder="Aucun critère sélectionné">
         </div>
 
-        <button class="btn btn-primary hidden mb-4" id="searchFilter">Rechercher</button>
+        <button class="btn btn-primary mb-4" id="searchFilter" onclick="keepSelect();">Rechercher</button>
     </form>
 
 
@@ -131,6 +133,11 @@ $visiteurs = $statement->fetchAll();
             <?php endforeach ?>
         </tbody>
     </table>
+
+    <?php if (isset($error)): ?>
+        <h1 class="text-center mt-5"><?= $error ?></h1>
+    <?php endif ?>
+
 </body>
 
 </html>

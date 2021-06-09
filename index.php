@@ -19,9 +19,17 @@ if (!empty($_GET['ville'])) {
     $params['ville'] = '%' . $_GET['ville'] . '%';
 }
 
+
+if (!empty($_GET['selectFilter']) && !empty($_GET['inputFilter'])) {
+    $query .= " WHERE " . $_GET['selectFilter']. " LIKE :".$_GET['selectFilter'];
+    $params[$_GET['selectFilter']] = '%' . $_GET['inputFilter'] . '%';
+   
+}
+
 $statement = $pdo->prepare($query);
 $statement->execute($params);
 $visiteurs = $statement->fetchAll();
+
 
 ?>
 
@@ -33,6 +41,9 @@ $visiteurs = $statement->fetchAll();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" defer></script>
+    <script src="app.js" defer></script>
     <title>Les visiteurs médicaux</title>
 </head>
 
@@ -59,8 +70,29 @@ $visiteurs = $statement->fetchAll();
         <div class="form-group">
             <input type="text" name="ville" class="form-control mb-2" placeholder="Insérer une ville">
         </div>
-        <button class="btn btn-primary mb-4">Rechercher la ville</button>
+        <button class="btn btn-primary mb-2">Rechercher la ville</button>
     </form>
+    <button class="btn btn-primary mb-4" onclick="showSelection();">Rechercher par un autre critère</button>
+
+    <form action="" method="get" class="hidden" id="formSelect">
+        <select onchange="yesnoCheck(this);" id="selectFilter" style="display: block;" class="mb-4" name="selectFilter">
+            <option value="none" disabled selected>Rechercher les critères</option>
+            <option libelle="un id" value="id">ID</option>
+            <option libelle="un nom" value="nom">Nom</option>
+            <option libelle="un prenom" value="prenom">Prenom</option>
+            <option libelle="une adresse" value="adresse">Adresse</option>
+            <option libelle="un code postal" value="cp">Code postal</option>
+            <option libelle="une date d'embauche" value="dateEmbauche">dateEmbauche</option>
+            <option libelle="un rôle" value="role">Rôle</option>
+        </select>
+
+        <div class="form-group hidden" id="filterItem">
+            <input type="text" id="selectedFilter" class="form-control mb-2" name="inputFilter">
+        </div>
+
+        <button class="btn btn-primary hidden mb-4" id="searchFilter">Rechercher</button>
+    </form>
+
 
     <table class="table">
         <thead>
